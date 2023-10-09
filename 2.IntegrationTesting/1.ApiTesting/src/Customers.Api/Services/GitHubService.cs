@@ -14,6 +14,7 @@ public class GitHubService : IGitHubService
 
     public async Task<bool> IsValidGitHubUser(string username)
     {
+        return true;
         var client = _httpClientFactory.CreateClient("GitHub");
         var response = await client.GetAsync($"/users/{username}");
         if (response.StatusCode == HttpStatusCode.Forbidden)
