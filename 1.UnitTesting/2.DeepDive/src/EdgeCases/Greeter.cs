@@ -1,10 +1,17 @@
 ﻿namespace EdgeCases;
 
-public class Greeter
+internal class Greeter
 {
-    public string GenerateGreetText()
+    private readonly IClock _clock;
+
+    public Greeter(IClock clock)
     {
-        var dateTimeNow = DateTime.Now;
+        _clock = clock;
+    }
+
+    internal string GenerateGreetText()
+    {
+        var dateTimeNow = _clock.Now;
         return dateTimeNow.Hour switch
         {
             >= 5 and < 12 => "Good morning",

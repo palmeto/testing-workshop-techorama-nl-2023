@@ -1,3 +1,4 @@
+using ForeignExchange.Api;
 using ForeignExchange.Api.Database;
 using ForeignExchange.Api.Repositories;
 using ForeignExchange.Api.Services;
@@ -15,6 +16,9 @@ builder.Services.AddSingleton<IDbConnectionFactory>(_ =>
 builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddSingleton<IRatesRepository, RatesRepository>();
 builder.Services.AddSingleton<IQuoteService, QuoteService>();
+
+builder.Services.AddSingleton<ILoggerAdapter<IQuoteService>, LoggerAdapter<IQuoteService>>();
+builder.Services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
 var app = builder.Build();
 
