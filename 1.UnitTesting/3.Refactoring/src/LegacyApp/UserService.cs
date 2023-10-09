@@ -4,6 +4,18 @@ namespace LegacyApp
 {
     public class UserService
     {
+        private readonly IUserCreditServiceClientFactory _clientFactory;
+
+        public UserService(IUserCreditServiceClientFactory clientFactory)
+        {
+            _clientFactory = clientFactory;
+        }
+
+        public UserService()
+        {
+            
+        }
+
         public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
         {
             if (string.IsNullOrEmpty(firname) || string.IsNullOrEmpty(surname))
@@ -46,7 +58,7 @@ namespace LegacyApp
             {
                 // Do credit check and double credit limit
                 user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditServiceClient())
+                using (var userCreditService = _clientFactory.CreateClient())
                 {
                     var creditLimit = userCreditService.GetCreditLimit(user.Firstname, user.Surname, user.DateOfBirth);
                     creditLimit = creditLimit*2;
