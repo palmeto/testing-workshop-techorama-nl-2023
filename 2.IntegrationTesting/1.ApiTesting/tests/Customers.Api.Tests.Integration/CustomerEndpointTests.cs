@@ -50,6 +50,39 @@ public class CustomerEndpointTests : IAsyncLifetime
         customerResponse.Should().BeEquivalentTo(expectedResponse, x => x.Excluding(y => y.Id));
         customerResponse.Id.Should().NotBeEmpty();
     }
+    
+    [Fact]
+    public async Task Get_ShouldReturnCustomer_WhenCustomerExists()
+    {
+        // Arrange
+        var request = new CustomerRequest
+        {
+            Email = "nick@chapsas.com",
+            FullName = "Nick Chapsas",
+            DateOfBirth = new DateTime(1993, 01, 01),
+            GitHubUsername = "nickchapsas"
+        };
+        var expectedResponse = new CustomerResponse
+        {
+            Email = request.Email,
+            FullName = request.FullName,
+            DateOfBirth = request.DateOfBirth,
+            GitHubUsername = request.GitHubUsername
+        };
+
+        var createCustomerHttpResponse = await _client.PostAsJsonAsync("customers", request);
+        var createdCustomer = await createCustomerHttpResponse.Content.ReadFromJsonAsync<CustomerResponse>();
+
+        // Act
+        var response = await _client.GetAsync($"customers/{createdCustomer!.Id}");
+        var customerResponse = await response.Content.ReadFromJsonAsync<CustomerResponse>();
+        _idsToDelete.Add(customerResponse!.Id);
+        
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        customerResponse.Should().BeEquivalentTo(expectedResponse, x => x.Excluding(e => e.Id));
+        customerResponse!.Id.Should().NotBeEmpty();
+    }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
